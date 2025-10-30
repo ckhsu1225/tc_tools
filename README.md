@@ -103,3 +103,24 @@ All functions have comprehensive docstrings with parameter descriptions and usag
 - numpy, xarray, scipy, pandas
 - vvm-reader (https://github.com/ckhsu1225/vvm_reader)
 
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+MIT License
+
+## Citation
+
+If you use TC Tools in your research, please cite:
+
+```bibtex
+@software{tc_tools,
+  title={TC Tools: Tropical Cyclone Analysis Tools for VVM Simulations},
+  author={Chun-Kai Hsu},
+  year={2025},
+  url={https://github.com/ckhsu1225/tc_tools}
+}
+```
+
