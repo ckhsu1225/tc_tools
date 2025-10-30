@@ -15,9 +15,25 @@ Tropical Cyclone Analysis Tools for VVM Simulations
 
 ## Installation
 
+### Option 1: Using uv (Recommended)
+
 ```bash
-# Install in development mode
+# Install in development mode with uv
 uv pip install -e .
+
+# Or use uv sync (creates/updates .venv automatically)
+uv sync
+```
+
+### Option 2: Using pip
+
+```bash
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install in development mode
+pip install -e .
 ```
 
 ## Quick Start
