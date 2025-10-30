@@ -1,0 +1,19 @@
+[project]
+name = "tc-tools"
+version = "0.1.0"
+description = "Tropical cyclone analysis tools for VVM simulations"
+readme = "README.md"
+authors = [{name = "Chun-Kai Hsu", email = "ken44669@gmail.com"}]
+requires-python = ">=3.13"
+dependencies = [
+    "numpy>=1.24",
+    "xarray>=2023.1",
+    "scipy>=1.10",
+    "pandas>=2.0",
+    "vvm-reader",
+    "dask>=2025.10.0",
+    "netcdf4>=1.7.3",
+    "matplotlib>=3.10.7",
+    "astropy>=7.1.1",
+    "flox>=0.10.7",
+]
