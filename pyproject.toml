@@ -10,7 +10,7 @@ dependencies = [
     "xarray>=2023.1",
     "scipy>=1.10",
     "pandas>=2.0",
-    "vvm-reader @ git+https://github.com/ckhsu/vvm_reader.git",
+    "vvm-reader @ git+https://github.com/ckhsu1225/vvm_reader.git",
     "dask>=2025.10.0",
     "netcdf4>=1.7.3",
     "matplotlib>=3.10.7",
