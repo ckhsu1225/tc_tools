@@ -15,24 +15,32 @@ Tropical Cyclone Analysis Tools for VVM Simulations
 
 ## Installation
 
-### Option 1: Using uv (Recommended)
+### Option 1: Install from GitHub (for users)
 
 ```bash
-# Install in development mode with uv
+# Using uv (Recommended - fast!)
+uv pip install git+https://github.com/ckhsu1225/tc_tools.git
+
+# Or using pip
+pip install git+https://github.com/ckhsu1225/tc_tools.git
+```
+
+### Option 2: Install from source for development
+
+If you want to modify the code:
+
+```bash
+# Clone the repository
+git clone https://github.com/ckhsu1225/tc_tools.git
+cd tc_tools
+
+# Install in development mode with uv (Recommended)
 uv pip install -e .
 
 # Or use uv sync (creates/updates .venv automatically)
 uv sync
-```
 
-### Option 2: Using pip
-
-```bash
-# Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
-# Install in development mode
+# Or with pip
 pip install -e .
 ```
 
