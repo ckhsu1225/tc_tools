@@ -401,7 +401,9 @@ def compute_streamfunction(
 
 def find_center_by_streamfunction(
     vort: xr.DataArray,
-    method: Literal['spectral', 'pcg', 'auto'] = 'auto',
+    poisson_method: Literal['spectral', 'pcg', 'auto'] = 'auto',
+    parallel_method: Literal['auto', 'joblib', 'serial'] = 'auto',
+    n_jobs: int = -1,
 ) -> xr.Dataset:
     """
     Find typhoon centers using streamfunction method.
@@ -416,12 +418,21 @@ def find_center_by_streamfunction(
         User should select vertical level before calling this function.
         Coordinates 'xc', 'yc', 'lon', 'lat' must be present.
         Can be raw or pre-smoothed vorticity.
-    method : {'spectral', 'pcg', 'auto'}, optional
+    poisson_method : {'spectral', 'pcg', 'auto'}, optional
         Method for solving Poisson equation:
         - 'spectral': Fast FFT method (assumes no terrain)
         - 'pcg': Preconditioned conjugate gradient (handles terrain/NaN)
         - 'auto': Automatically detect terrain and choose method
         Default: 'auto'
+    parallel_method : {'auto', 'joblib', 'serial'}, optional
+        Parallelization strategy for processing multiple time steps:
+        - 'auto': Automatically choose (serial for <=10 steps, joblib for >10)
+        - 'joblib': Use joblib parallel processing (fastest for most cases)
+        - 'serial': Simple for loop (good for small datasets or debugging)
+        Default: 'auto'
+    n_jobs : int, optional
+        Number of parallel jobs for joblib. -1 uses all CPU cores.
+        Ignored when parallel_method='serial'. Default: -1
 
     Returns
     -------
@@ -458,7 +469,11 @@ def find_center_by_streamfunction(
     >>> centers.to_dataframe().to_csv('centers.csv')
     >>>
     >>> # Explicitly use PCG method for terrain
-    >>> centers = tct.find_center_by_streamfunction(vort, method='pcg')
+    >>> centers = tct.find_center_by_streamfunction(vort, poisson_method='pcg')
+    >>>
+    >>> # Use joblib with 4 cores
+    >>> centers = tct.find_center_by_streamfunction(vort, poisson_method='spectral',
+    ...                                              parallel_method='joblib', n_jobs=4)
     >>>
     >>> # Use vertical average
     >>> vort_avg = ds['zeta'].sel(lev=slice(500, 2000)).mean('lev')
@@ -470,9 +485,10 @@ def find_center_by_streamfunction(
     - The streamfunction is smoother than vorticity, making it more robust for weak vortices
     - VVM simulations are assumed to be in Northern Hemisphere convention
     - Typhoon center is identified as streamfunction minimum
-    - If terrain (NaN values) detected with method='auto', automatically switches to PCG
+    - If terrain (NaN values) detected with poisson_method='auto', automatically switches to PCG
     - PCG method is slower but handles terrain correctly
     - Designed for single-typhoon VVM simulations (searches entire domain)
+    - Joblib parallelization typically provides 2-4x speedup on multi-core systems
     """
     # Validate input
     if 'xc' not in vort.coords or 'yc' not in vort.coords:
@@ -486,7 +502,8 @@ def find_center_by_streamfunction(
 
     # Compute streamfunction using the existing function
     # This handles terrain detection, parallelization, and all edge cases
-    psi = compute_streamfunction(vort, poisson_method=method)
+    psi = compute_streamfunction(vort, poisson_method=poisson_method,
+                                 parallel_method=parallel_method, n_jobs=n_jobs)
 
     # Vectorized center finding for all time steps
     n_times = psi.sizes['time']
@@ -543,7 +560,8 @@ def find_center_by_streamfunction(
         coords={'time': psi.time.values},
         attrs={
             'method': 'streamfunction',
-            'solver': psi.attrs.get('poisson_method', method),  # Get actual method used
+            'solver': psi.attrs.get('poisson_method', poisson_method),  # Get actual method used
+            'parallel_method': psi.attrs.get('parallel_method', parallel_method),
             'description': 'Typhoon center locations found by streamfunction method'
         }
     )
